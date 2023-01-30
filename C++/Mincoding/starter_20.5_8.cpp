@@ -2,49 +2,55 @@
 
 using namespace std;
 
-int sizeX, sizeY;
-int mat[4][5] = {
-	3, 5, 4, 2, 5,
-	3, 3, 3, 2, 1,
-	3, 2, 6, 7, 8,
-	9, 1, 1, 3, 2
-};
-
-int getSum(int x, int y)
-{
-	int sum = 0;
-	for (int i = x; i < x + sizeX; i++)
-	{
-		for (int j = y; j < y + sizeY; j++)
-		{
-			sum += mat[i][j];
-		}
-	}
-	return sum;
-}
-
 int main()
 {
-	int max = 0, maxX, maxY;
+	int arr[2][4], result[8], idx[2] = { 0 }, resultidx = 0;
 
-	cin >> sizeX >> sizeY;
-
-	for (int i = 0; i < 4 - (sizeX - 1); i++)
+	for (int i = 0; i < 2; i++)
 	{
-		for (int j = 0; j < 5 - (sizeY - 1); j++)
+		for (int j = 0; j < 4; j++)
 		{
-			int ret = getSum(i, j);
-
-			if (ret > max)
-			{
-				max = ret;
-				maxX = i;
-				maxY = j;
-			}
+			cin >> arr[i][j];
 		}
 	}
 
-	cout << '(' << maxX << ',' << maxY << ')';
+	for (int i = 0; i < 8; i++)
+	{
+		int a, b, min;
+
+		a = arr[0][idx[0]];
+		b = arr[1][idx[1]];
+
+		if (idx[0] == 4 && idx[1] == 4)
+		{
+			break;
+		}
+		else if (idx[0] == 4) {
+			min = b;
+			idx[1]++;
+		}
+		else if (idx[1] == 4) {
+			min = a;
+			idx[0]++;
+		}
+		else {
+			if (a <= b)
+			{
+				min = a;
+				idx[0]++;
+			}
+			else {
+				min = b;
+				idx[1]++;
+			}
+		}
+		result[resultidx++] = min;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		cout << result[i] << ' ';
+	}
 
 	return 0;
 }
