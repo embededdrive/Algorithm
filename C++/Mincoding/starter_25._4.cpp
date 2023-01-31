@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -71,13 +72,27 @@ int main()
 		idx = idx + 1;
 	}
 
-	int a = 0;
-	int b = 0;
+	idx = 0;
 	while (true)
 	{
-		a = str.find('^', a);
-		if (a == -1) break;
-		if
+		idx = str.find('^', idx);
+		if (idx == -1) break;
+		while (true)
+		{
+			len = str.length();
+			if (len >= idx + 2)
+			{
+				if (str[idx] == '^' && str[idx + 1] != '_' && str[idx + 2] == '^')
+				{
+					str.erase(idx + 1, 1);
+					str.insert(idx + 1, "_");
+				}
+				else break;
+			}
+			else break;
+		}
+
+		idx = idx + 1;
 	}
 
 	cout << str;
