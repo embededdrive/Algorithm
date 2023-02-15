@@ -35,7 +35,7 @@ int main()
 {
 	init();
 
-    cin >> n >> k;
+	cin >> n >> k;
 
 	for (int i = 0; i < n; i++)
 	{
@@ -64,10 +64,10 @@ int main()
 		}
 	}
 
-	for (int i = 0; i < k; i++)
+	for (int i = 1; i <= k; i++)
 	{
 		cout << grade[group[i]];
 	}
 
-    return 0;
+	return 0;
 }
