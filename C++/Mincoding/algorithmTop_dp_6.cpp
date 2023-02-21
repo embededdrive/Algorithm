@@ -3,6 +3,10 @@
 
 using namespace std;
 
+struct Node {
+	int y, x;
+};
+
 int n;
 
 int damage[1001][1001];
@@ -10,9 +14,8 @@ int visited[1001][1001];
 int memo[1001][1001];
 int dir[1001][1001];
 
-//			하	상	우	좌
-int dY[4] = { -1, 1, 0, 0 };
-int dX[4] = { 0, 0, -1, 1 };
+int dY[4] = { -1, 0, 1, 0 };
+int dX[4] = { 0, -1, 0, 1 };
 
 int totalDamage(int y, int x)
 {
@@ -24,7 +27,7 @@ int totalDamage(int y, int x)
 
 	int minDamage = 2e08;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		int pY = y + dY[i];
 		int pX = x + dX[i];
@@ -61,9 +64,38 @@ int main()
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
 			cin >> damage[i][j];
-		
 
-	cout << totalDamage(n - 1,n - 1) << '\n';
+	int ret = totalDamage(n - 1, n - 1);
+
+	int y = n - 1;
+	int x = n - 1;
+
+	vector<Node> v;
+
+	v.push_back({ y, x });
+
+	while (y != 0 || x != 0)
+	{
+		if (dir[y][x] == 0)
+			y--;
+		else if (dir[y][x] == 1)
+			x--;
+		else if (dir[y][x] == 2)
+			y++;
+		else if (dir[y][x] == 3)
+			x++;
+
+		v.push_back({ y, x });
+	}
+
+	cout << ret << '\n';
+	while (!v.empty())
+	{
+		Node log = v[v.size() - 1];
+		v.pop_back();
+
+		cout << log.y << ',' << log.x << '\n';
+	}
 
 	return 0;
 }
