@@ -5,6 +5,7 @@ using namespace std;
 int n, q;
 int weights[20];
 int used[20];
+int memo[100000];
 
 int makeWeight(int target) {
 
@@ -45,12 +46,15 @@ int makeWeight(int target) {
 
 int main()
 {
-	int cnt = 0;
-	
+	int cnt = 0, sum = 0;
+
 	cin >> n;
 
 	for (int i = 0; i < n; i++)
 		cin >> weights[i];
+
+	for (int i = 0; i < n; i++)
+		sum += weights[i];
 
 	cin >> q;
 
@@ -60,7 +64,29 @@ int main()
 
 		cin >> measure;
 
-		cnt += makeWeight(measure);
+		if (measure > sum)
+			continue;
+
+		if (memo[measure] == 1)
+		{
+			cnt++;
+		}
+		else if (memo[measure] == 2)
+		{
+			continue;
+		}
+		else {
+			int ret = makeWeight(measure);
+
+			if (ret == 1)
+			{
+				memo[measure] = 1;
+				cnt++;
+			}
+			else {
+				memo[measure] = 2;
+			}
+		}
 	}
 
 	cout << cnt;
