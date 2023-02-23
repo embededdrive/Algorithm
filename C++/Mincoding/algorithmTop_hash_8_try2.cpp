@@ -51,7 +51,7 @@ int main()
 		compareSize = 2;
 		doubleCheck = true;
 	}
-		
+
 	else
 		compareSize = pn;
 
@@ -80,6 +80,9 @@ int main()
 		{
 			Coord now = um[search][i];
 
+			if (now.y + pn > height || now.x + pn > width)
+				continue;
+
 			string fullKey = getString(now.y, now.x, pn, 1);
 
 			um[fullKey].push_back({ now.y, now.x });
@@ -87,7 +90,7 @@ int main()
 
 		fullSearch = getString(0, 0, pn, 0);
 	}
-	
+
 	int fullSize = um[fullSearch].size();
 
 	for (int i = 0; i < fullSize; i++)

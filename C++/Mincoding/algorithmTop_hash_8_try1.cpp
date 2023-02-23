@@ -77,6 +77,9 @@ int main()
 
 		bool isSame = true;
 
+		if (cY + pn > height || cX + pn > width)
+			continue;
+
 		for (int j = 0; j < pn; j++)
 		{
 			for (int k = 0; k < pn; k++)
