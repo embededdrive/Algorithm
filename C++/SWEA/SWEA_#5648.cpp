@@ -1,121 +1,75 @@
 ﻿#include <iostream>
 #include <queue>
-
+#include <vector>
+#include <algorithm>
 using namespace std;
 
-struct Coord {
-	int y, x;
-};
-
-struct Atom {
-	int y, x;
-	int dir;
-	int energy;
-	bool isDead;
-};
-
-int map[4001][4001];
-Atom atoms[1001];
-queue<int> deads;
-queue<Coord> temp;
-
-int main()
-{
-	int t;
-
-	int dY[4] = { 1, -1, 0, 0 };
-	int dX[4] = { 0, 0, -1, 1 };
-
-	cin >> t;
-
-	for (int tc = 1; tc <= t; tc++)
-	{
-		int energySum = 0, remains = 0;
-
-		int n;
-
-		// input
-		cin >> n;
-
-		remains = n;
-
-		for (int i = 1; i <= n; i++)
-		{
-			int x, y, d, e;
-
-			cin >> x >> y >> d >> e;
-
-			int aY = y * 2 + 2000;
-			int aX = x * 2 + 2000;
-
-			map[aY][aX] = i;
-			atoms[i] = { aY, aX, d, e, false };
+int placable(vector<vector<int>>& block, vector<vector<int>>& board, int y, int x) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (board[y + i][x + j] == 1 && block[i][j] == 1)
+				return 0;
 		}
-
-		//
-		while (remains > 0)
-		{
-
-			for (int i = 1; i <= n; i++)
-			{
-				if (atoms[i].isDead)
-					continue;
-
-				int cY = atoms[i].y;
-				int cX = atoms[i].x;
-				int nY = cY + dY[atoms[i].dir];
-				int nX = cX + dX[atoms[i].dir];
-
-				atoms[i].y = nY;
-				atoms[i].x = nX;
-
-				map[cY][cX] = 0;
-
-				if (nY < 0 || nX < 0 || nY > 4000 || nX > 4000)
-				{
-					remains--;
-					atoms[i].isDead = true;
-					continue;
-				}
-
-				if (map[nY][nX] == 0)
-				{
-					map[nY][nX] = i;
-				}
-				else if (map[nY][nX] == -1) {
-					deads.push(i);
-				}
-				else {
-					deads.push(map[nY][nX]);
-					deads.push(i);
-					temp.push({ nY, nX });
-					map[nY][nX] = -1;
-				}
-			}
-
-			while (!temp.empty())
-			{
-				Coord tempCoord = temp.front();
-				temp.pop();
-				int tempY = tempCoord.y;
-				int tempX = tempCoord.x;
-
-				map[tempY][tempX] = 0;
-			}
-
-			while (!deads.empty())
-			{
-				int idx = deads.front();
-				deads.pop();
-
-				remains--;
-				energySum += atoms[idx].energy;
-				atoms[idx].isDead = true;
-			}
-		}
-
-		cout << '#' << tc << ' ' << energySum << '\n';
 	}
+	return 1;
+}
 
+vector<vector<int>> rotate(vector<vector<int>> block) {
+	vector<vector<int>> result(4, vector<int>(4));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result[i][j] = block[4 - j][i];
+		}
+	}
+	return result;
+}
+
+int solve(vector<vector<int>> block, vector<vector<int>>& board) {
+	int result = 0;
+	for (int i = 0; i <= 6; i++) {
+		for (int j = 0; j <= 6; j++) {
+			for (int k = 0; k < 4; k++) {
+				if (placable(block, board, i, j)) {
+					result++;
+				}
+				block = rotate(block);
+			}
+		}
+	}
+}
+
+int main() {
+	vector<vector<int>> block(4, vector<int>(4));
+	vector<vector<int>> board(10, vector<int>(10));
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			char c;
+			cin >> c;
+			switch (c) {
+			case '$':
+				block[i][j] = 1;
+				break;
+			case '_':
+				block[i][j] = 0;
+				break;
+			}
+		}
+	}
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			char c;
+			cin >> c;
+			switch (c) {
+			case '#':
+				board[i][j] = 1;
+				break;
+			case '_':
+				board[i][j] = 0;
+				break;
+			}
+		}
+	}
+	int result = solve(block, board);
+	cout << result;
 	return 0;
 }
