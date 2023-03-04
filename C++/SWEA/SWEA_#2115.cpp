@@ -1,80 +1,130 @@
 ﻿#include <iostream>
+#include <vector>
 #include <algorithm>
-#include <queue>
 
 using namespace std;
+
+struct Income
+{
+    int y, x;
+    int profit;
+};
+
+vector<Income> v;
+
+bool cmp(Income left, Income right)
+{
+    return left.profit > right.profit;
+}
 
 int n, m, c;
 int honey[10][10];
 
-int getMaxHoney(int y, int x)
+int profit;
+int cY, cX;
+
+char path[5];
+
+void dfs(int lev)
 {
-	int sum = honey[y][x];
-	int use = 0;
+    if (lev >= m)
+    {
+        int sum = 0;
+        int value = 0;
 
-	for (int i = 1; i < m; i++)
-	{
-		if (x + i >= n)
-			break;
+        for (int i = 0; i < m; i++)
+        {
+            int include = path[i] - '0';
+            int cHoney = honey[cY][cX + i];
 
-		if (sum + honey[y][x + i] > c)
-			break;
+            sum += include * cHoney;
+            value += include * cHoney * cHoney;
+        }
 
-		sum += honey[y][x + i];
-	}
+        if (sum <= c && profit < value)
+        {
+            profit = value;
+        }
 
-	return sum;
+        return;
+    }
+
+    for (int i = 0; i < 2; i++)
+    {
+        path[lev] = '0' + i;
+        dfs(lev + 1);
+        path[lev] = 0;
+    }
+
 }
 
-int getMaxInRange(int y, int x)
+void maximumHoney(int y, int x)
 {
+    profit = 0;
 
+    cY = y;
+    cX = x;
+
+    dfs(0);
+
+    v.push_back({ y, x, profit });
 }
 
 void input()
 {
-	cin >> n >> m >> c;
+    cin >> n >> m >> c;
 
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++)
-			cin >> honey[i][j];
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> honey[i][j];
 }
 
 int main()
 {
-	int t;
+    // freopen_s(new FILE*, "input.txt", "r", stdin);
 
-	cin >> t;
+    int t;
 
-	input();
+    cin >> t;
+
+    for (int tc = 1; tc <= t; tc++)
+    {
+        v.clear();
+
+        input();
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j <= n - m; j++)
+                maximumHoney(i, j);
+
+        sort(v.begin(), v.end(), cmp);
 
 
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-		{
-			cout << getMaxHoney(i, j) << ' ';
-		}
-		cout << endl;
-	}
-	
+        Income max = v[0];
+        int ans = max.profit;
 
-	/*for (int tc = 1; tc <= t; tc++)
-	{
+        for (int i = 1; i < v.size(); i++)
+        {
+            Income next = v[i];
 
-		
+            if (max.y == next.y)
+            {
+                int from = max.x;
+                int to = max.x + m - 1;
 
-		cout << '#' << tc << ' ' << ans << '\n';
-	}*/
+                if (next.x >= from && next.x <= to)
+                    continue;
 
-	return 0;
+                if (next.x + m - 1 >= from && next.x + m - 1 <= to)
+                    continue;
+            }
+
+            ans += next.profit;
+            break;
+        }
+
+        cout << '#' << tc << ' ' << ans << '\n';
+    }
+
+    return 0;
 }
-
-
-/*
-
-특정 좌표의 최대 채취량 구하는 함수
-
-특정 좌표로부터 마지막 좌표까지의 최대 채취량을 구하는 DP함수
-
-*/
